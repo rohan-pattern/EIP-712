@@ -156,7 +156,7 @@
 //! }
 //! ```
 
-#![warn(missing_docs)]
+// #![warn(missing_docs)]
 
 #[macro_use]
 extern crate validator_derive;

@@ -15,6 +15,8 @@
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
 //! EIP712 Encoder
+#[allow(unused_parens)]
+
 use ethabi::{encode, Token as EthAbiToken};
 use ethereum_types::{Address as EthAddress, U256, H256};
 use keccak_hash::keccak;
@@ -42,7 +44,7 @@ fn check_hex(string: &str) -> Result<()> {
 }
 /// given a type and HashMap<String, Vec<FieldType>>
 /// returns a HashSet of dependent types of the given type
-fn build_dependencies<'a>(message_type: &'a str, message_types: &'a MessageTypes) -> Option<(HashSet<&'a str>)>
+fn build_dependencies<'a>(message_type: &'a str, message_types: &'a MessageTypes) -> Option<HashSet<&'a str>>
 {
 	if message_types.get(message_type).is_none() {
 		return None;
@@ -210,13 +212,12 @@ fn encode_data(
 /// encodes and hashes the given EIP712 struct
 pub fn hash_structured_data(typed_data: EIP712) -> Result<H256> {
 	// validate input
-	typed_data.validate()?;
 	// EIP-191 compliant
 	let prefix = (b"\x19\x01").to_vec();
 	let domain = to_value(&typed_data.domain).unwrap();
 	let parser = Parser::new();
 	let (domain_hash, data_hash) = (
-		encode_data(&parser, &Type::Custom("EIP712Domain".into()), &typed_data.types, &domain, None)?,
+		encode_data(&parser, &Type::Custom("StarkNetDomain".into()), &typed_data.types, &domain, None)?,
 		encode_data(&parser, &Type::Custom(typed_data.primary_type), &typed_data.types, &typed_data.message, None)?
 	);
 	let concat = [&prefix[..], &domain_hash[..], &data_hash[..]].concat();
